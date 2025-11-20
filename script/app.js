@@ -9,7 +9,6 @@ async function loadWeather(lat, lon) {
 
     document.getElementById("flag").src = data.flag;
 
-    // AQUI ESTAVA O ERRO — agora usando URL do OpenWeather
     document.getElementById("weather-icon").src =
         `https://openweathermap.org/img/wn/${data.icon}@4x.png`;
 
