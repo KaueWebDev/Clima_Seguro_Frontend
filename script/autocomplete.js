@@ -26,3 +26,6 @@ input.addEventListener("input", async () => {
         list.appendChild(li);
     });
 });
+document.getElementById("weather-icon").src =
+        `https://openweathermap.org/img/wn/${data.icon}@4x.png`;
+}
