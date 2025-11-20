@@ -1,7 +1,7 @@
 const input = document.getElementById("city-input");
 const list = document.getElementById("autocomplete-list");
 
-const API_BACKEND = "https://SEU_BACKEND.onrender.com";
+const API_BACKEND = "https://clima-seguro-backend.onrender.com";
 
 input.addEventListener("input", async () => {
     const q = input.value;
