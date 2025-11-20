@@ -3,6 +3,7 @@ const list = document.getElementById("autocomplete-list");
 
 const API_BACKEND = "https://clima-seguro-backend.onrender.com";
 
+// AUTOCOMPLETE
 input.addEventListener("input", async () => {
     const q = input.value;
     if (q.length < 2) {
@@ -26,9 +27,8 @@ input.addEventListener("input", async () => {
         list.appendChild(li);
     });
 });
-document.getElementById("weather-icon").src =
-        `https://openweathermap.org/img/wn/${data.icon}@4x.png`;
-}
+
+// ATUALIZA A INTERFACE
 function updateWeatherUI(data) {
     const city = document.getElementById("city");
     const temp = document.getElementById("temp");
@@ -37,7 +37,7 @@ function updateWeatherUI(data) {
     city.textContent = data.city;
     temp.textContent = Math.round(data.temp) + "°C";
 
-    // ÍCONE OFICIAL
-    const iconCode = data.icon; 
+    // Ícone oficial da OpenWeather
+    const iconCode = data.icon;
     icon.src = `https://openweathermap.org/img/wn/${iconCode}@4x.png`;
 }
