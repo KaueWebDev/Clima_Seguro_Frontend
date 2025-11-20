@@ -1,5 +1,5 @@
 async function loadWeather(lat, lon) {
-    const res = await fetch(`${API_BACKEND}/api/weather?lat=${lat}&lon=${lon}`);
+    const res = await fetch(`https://clima-seguro-backend.onrender.com/api/weather?lat=${lat}&lon=${lon}`);
     const data = await res.json();
 
     document.getElementById("weather-box").classList.remove("hidden");
