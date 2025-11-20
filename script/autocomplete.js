@@ -29,3 +29,15 @@ input.addEventListener("input", async () => {
 document.getElementById("weather-icon").src =
         `https://openweathermap.org/img/wn/${data.icon}@4x.png`;
 }
+function updateWeatherUI(data) {
+    const city = document.getElementById("city");
+    const temp = document.getElementById("temp");
+    const icon = document.getElementById("weather-icon");
+
+    city.textContent = data.city;
+    temp.textContent = Math.round(data.temp) + "°C";
+
+    // ÍCONE OFICIAL
+    const iconCode = data.icon; 
+    icon.src = `https://openweathermap.org/img/wn/${iconCode}@4x.png`;
+}
