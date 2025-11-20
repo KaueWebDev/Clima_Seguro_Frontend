@@ -10,7 +10,7 @@ input.addEventListener("input", async () => {
         return;
     }
 
-    const res = await fetch(`${API_BACKEND}/api/autocomplete?q=${q}`);
+    const res = await fetch(`https://clima-seguro-backend.onrender.com/api/autocomplete?q=${query}`);
     const cities = await res.json();
 
     list.innerHTML = "";
