@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Previsão do Tempo</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header>
+    <img src="assets/logo.png" class="logo">
+    <h1>Previsão do Tempo</h1>
+</header>
+
+<div class="container">
+
+    <input id="city-input" placeholder="Digite uma cidade...">
+    <ul id="autocomplete-list"></ul>
+
+    <div id="weather-box" class="weather hidden">
+        <h2 id="city-name"></h2>
+        <img id="flag" class="flag">
+        <img id="weather-icon" class="weather-icon">
+        <p id="temp"></p>
+        <p id="desc"></p>
+        <p id="humidity"></p>
+        <p id="wind"></p>
+    </div>
+
+</div>
+
+<script src="js/autocomplete.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
