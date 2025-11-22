@@ -1,4 +1,4 @@
-const API_BASE = "http://127.0.0.1:5000";
+const API_BASE = "https://clima-seguro-backend.onrender.com";
 
 
 const searchInput = document.getElementById("search");
