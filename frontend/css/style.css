@@ -1,74 +1,67 @@
 body {
-    background: #0d1117;
-    color: white;
-    font-family: Arial;
-    margin: 0;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background: #0c0c0f;
+  color: #ffffff;
+  text-align: center;
 }
 
 header {
-    padding: 30px;
-    background: #161b22;
-    text-align: center;
-}
-
-.logo {
-    width: 80px;
+  padding: 20px;
+  background: #111118;
+  font-size: 28px;
+  font-weight: bold;
 }
 
 .container {
-    width: 600px;
-    margin: 30px auto;
+  margin-top: 40px;
+  width: 90%;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-#city-input {
-    width: 100%;
-    padding: 15px;
-    border-radius: 8px;
-    border: 2px solid #30363d;
-    background: #161b22;
-    color: white;
+input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-size: 16px;
 }
 
-ul#autocomplete-list {
-    list-style: none;
-    background: #1c2128;
-    margin-top: 5px;
-    padding: 0;
-    border-radius: 8px;
+#autocomplete-list {
+  background: #1a1a22;
+  border-radius: 8px;
+  margin-top: 5px;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
-ul#autocomplete-list li {
-    padding: 12px;
-    cursor: pointer;
-    border-bottom: 1px solid #30363d;
+.option {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #333;
 }
 
-ul#autocomplete-list li:hover {
-    background: #30363d;
+.option:hover {
+  background: #292933;
 }
 
-.weather {
-    margin-top: 40px;
-    padding: 20px;
-    border-radius: 12px;
-    background: #1c2128;
-    text-align: center;
-}
-
-.flag {
-    width: 50px;
-}
-
-.weather-icon {
-    width: 120px;
+.weather-box {
+  margin-top: 25px;
+  background: #1a1a22;
+  padding: 20px;
+  border-radius: 12px;
 }
 
 .hidden {
-    display: none;
+  display: none;
 }
 
-@media (max-width: 800px) {
-    .container {
-        width: 90%;
-    }
+#flag {
+  width: 40px;
+  height: 30px;
+  border-radius: 5px;
 }
