@@ -28,7 +28,7 @@ div.textContent = city.name;
 div.addEventListener("click", () => {
 searchInput.value = city.name;
 autocompleteBox.innerHTML = "";
-loadWeather(city.lat, city.lon);
+loadWeather(city.lat, city.lon, city.name, city.country_code);
 });
 
 
