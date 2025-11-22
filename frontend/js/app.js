@@ -4,18 +4,16 @@ async function loadWeather(lat, lon) {
 
     document.getElementById("weather-box").classList.remove("hidden");
 
-    document.getElementById("city-name").innerText =
-        `${data.city} (${data.country})`;
-
-    document.getElementById("flag").src = data.flag;
+    document.getElementById("city-name").innerText = data.city;
 
     document.getElementById("weather-icon").src =
-        `https://openweathermap.org/img/wn/${data.icon}@4x.png`;
+        `https://raw.githubusercontent.com/open-meteo/open-meteo/main/icons/${data.icon}.png`;
 
     document.getElementById("temp").innerText =
         `🌡 Temperatura: ${Math.round(data.temp)}°C`;
 
-    document.getElementById("desc").innerText = data.description;
+    document.getElementById("desc").innerText =
+        data.description;
 
     document.getElementById("humidity").innerText =
         `💧 Umidade: ${data.humidity}%`;
