@@ -1,4 +1,4 @@
-/* ======== Global ======== */
+/* ===== Global ===== */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -22,7 +22,7 @@ body {
     text-align: center;
 }
 
-/* ======== Título ======== */
+/* ===== Título ===== */
 h1 {
     font-size: 2.5rem;
     margin-bottom: 20px;
@@ -30,9 +30,10 @@ h1 {
     text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
 }
 
-/* ======== Campo de busca ======== */
+/* ===== Campo de busca ===== */
 .search-container {
     position: relative;
+    margin-bottom: 20px;
 }
 
 input#search {
@@ -51,7 +52,7 @@ input#search:focus {
     box-shadow: 0 0 10px #ffcb6b;
 }
 
-/* ======== Autocomplete ======== */
+/* ===== Autocomplete ===== */
 .autocomplete {
     position: absolute;
     top: 100%;
@@ -59,7 +60,6 @@ input#search:focus {
     right: 0;
     background-color: #1f1f27;
     border-radius: 0 0 10px 10px;
-    overflow: hidden;
     max-height: 200px;
     overflow-y: auto;
     z-index: 10;
@@ -75,9 +75,9 @@ input#search:focus {
     background-color: #33334d;
 }
 
-/* ======== Weather Box ======== */
+/* ===== Weather Box ===== */
 .weather-box {
-    margin-top: 25px;
+    margin-top: 15px;
     background: rgba(255, 255, 255, 0.05);
     padding: 20px;
     border-radius: 15px;
@@ -105,7 +105,7 @@ input#search:focus {
     display: none;
 }
 
-/* ======== Scrollbar Autocomplete ======== */
+/* ===== Scrollbar Autocomplete ===== */
 .autocomplete::-webkit-scrollbar {
     width: 6px;
 }
@@ -115,56 +115,20 @@ input#search:focus {
     border-radius: 3px;
 }
 
-/* ======== Media Queries ======== */
-
-/* Telas menores que 768px (tablets) */
+/* ===== Media Queries ===== */
 @media (max-width: 768px) {
-    h1 {
-        font-size: 2rem;
-    }
-
-    input#search {
-        padding: 10px 12px;
-        font-size: 15px;
-    }
-
-    .weather-box h2 {
-        font-size: 1.5rem;
-    }
-
-    .weather-box p {
-        font-size: 0.95rem;
-    }
+    h1 { font-size: 2rem; }
+    input#search { font-size: 15px; padding: 10px; }
+    .weather-box h2 { font-size: 1.5rem; }
+    .weather-box p { font-size: 0.95rem; }
 }
 
-/* Telas menores que 480px (celulares) */
 @media (max-width: 480px) {
-    body {
-        padding-top: 30px;
-    }
-
-    h1 {
-        font-size: 1.8rem;
-    }
-
-    input#search {
-        padding: 8px 10px;
-        font-size: 14px;
-    }
-
-    .weather-box {
-        padding: 15px;
-    }
-
-    .weather-box h2 {
-        font-size: 1.3rem;
-    }
-
-    .weather-box p {
-        font-size: 0.9rem;
-    }
-
-    .weather-box img {
-        width: 50px;
-    }
+    body { padding-top: 30px; }
+    h1 { font-size: 1.8rem; }
+    input#search { font-size: 14px; padding: 8px; }
+    .weather-box { padding: 15px; }
+    .weather-box h2 { font-size: 1.3rem; }
+    .weather-box p { font-size: 0.9rem; }
+    .weather-box img { width: 50px; }
 }
