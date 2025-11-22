@@ -1,3 +1,4 @@
+const API_BASE = "https://clima-seguro-backend.onrender.com";
 const weatherBox = document.getElementById("weather");
 
 async function loadWeather(lat, lon, name, country) {
