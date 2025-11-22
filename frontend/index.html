@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clima Seguro</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clima Seguro</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header>🌦️ Clima Seguro</header>
+    <div class="container">
+        <h1>Clima Seguro 🌤️</h1>
+        <input type="text" id="search" placeholder="Digite uma cidade...">
+        <div id="autocomplete-list" class="autocomplete"></div>
 
-  <div class="container">
-    <input type="text" id="search" placeholder="Digite uma cidade..." autocomplete="off">
-    <div id="autocomplete-list"></div>
-
-    <div id="weather" class="weather-box hidden">
-      <h2 id="city-name"></h2>
-      <img id="flag" src="" alt="Bandeira">
-      <h3 id="desc"></h3>
-      <p id="temp"></p>
-      <p id="humidity"></p>
-      <p id="wind"></p>
+        <div id="weather" class="hidden">
+            <h2 id="city-name"></h2>
+            <img id="flag" src="" alt="Bandeira" width="50">
+            <p id="desc"></p>
+            <p id="temp"></p>
+            <p id="humidity"></p>
+            <p id="wind"></p>
+        </div>
     </div>
-  </div>
 
-  <script src="app.js"></script>
+    <script src="autocomplete.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
