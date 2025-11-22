@@ -37,8 +37,8 @@ autocompleteBox.appendChild(div);
 });
 
 
-async function loadWeather(lat, lon) {
-const res = await fetch(`${API_BASE}/api/weather?lat=${lat}&lon=${lon}`);
+async function loadWeather(lat, lon, name, country) {
+const res = await fetch(`${API_BASE}/api/weather?lat=${lat}&lon=${lon}&name=${encodeURIComponent(name)}&country=${country}`);
 const data = await res.json();
 
 
