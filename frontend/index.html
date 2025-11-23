@@ -1,45 +1,30 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Clima Seguro 🌤️</title>
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="css/style.css" />
-
-    <!-- Leaflet (mapa) -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClimaSeguro 🌤️</title>
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-
-    <!-- Font (opcional) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
+        <h1 class="logo-title">
+            <img src="img/logo.png" alt="Logo" class="site-logo">
+            ClimaSeguro
+        </h1>
 
-        <!-- HEADER (logo + título) -->
-        <header class="header">
-            <div class="logo-container">
-                <img src="img/logo.png" alt="Logo" class="logo">
-                <h1 class="title">Clima Seguro</h1>
-            </div>
-        </header>
-
-        <!-- BUSCA -->
         <div class="search-container">
-            <input type="text" id="search" placeholder="Digite uma cidade..." autocomplete="off">
+            <input type="text" id="search" placeholder="Digite uma cidade...">
             <div id="autocomplete-list" class="autocomplete"></div>
         </div>
 
-        <!-- MAIN ROW: caixa de clima + mapa -->
         <div class="main-row">
-            <div class="left-col">
+            <!-- Weather e Forecast -->
+            <div class="weather-forecast-column">
                 <div id="weather" class="weather-box hidden">
-                    <div class="weather-header">
-                        <h2 id="city-name">Local Desconhecido</h2>
-                        <img id="flag" src="" alt="Bandeira" class="flag" style="display:none;">
-                    </div>
-
+                    <h2 id="city-name">Local Desconhecido</h2>
+                    <img id="flag" src="" alt="Bandeira" width="60" style="display:none;">
                     <p id="desc">Condição atual</p>
                     <p id="temp">🌡 Temperatura: --°C</p>
                     <p id="humidity">💧 Umidade: --%</p>
@@ -50,14 +35,13 @@
                 <div id="forecast-container" class="forecast-wrapper"></div>
             </div>
 
-            <aside class="right-col">
-                <div id="map" class="map-box"></div>
-            </aside>
+            <!-- Mapa -->
+            <div class="map-column">
+                <div id="map"></div>
+            </div>
         </div>
-
     </div>
 
-    <!-- Scripts -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="js/app.js"></script>
     <script src="js/autocomplete.js"></script>
