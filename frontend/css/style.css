@@ -114,6 +114,29 @@ input#search:focus {
     background-color: #ffcb6b;
     border-radius: 3px;
 }
+/* ===== Previsão dos próximos dias ===== */
+.forecast-wrapper {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+.forecast-card {
+    min-width: 120px;
+    background: #1c1c21;
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+    color: #fff;
+    border: 1px solid #333;
+}
+
+.f-date {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
 
 /* ===== Media Queries ===== */
 @media (max-width: 768px) {
