@@ -114,28 +114,62 @@ input#search:focus {
     background-color: #ffcb6b;
     border-radius: 3px;
 }
-/* ===== Previsão dos próximos dias ===== */
+
+/* ===============================
+   PREVISÃO DOS PRÓXIMOS DIAS
+================================= */
+.forecast-title {
+    margin-top: 25px;
+    margin-bottom: 10px;
+    font-size: 1.4rem;
+    color: #ffcb6b;
+    text-align: left;
+    font-weight: 600;
+}
+
+/* Wrapper com scroll */
 .forecast-wrapper {
     display: flex;
     gap: 15px;
-    margin-top: 20px;
+    margin-top: 10px;
     overflow-x: auto;
     padding-bottom: 10px;
+    scroll-behavior: smooth;
 }
 
+/* Estilo do scrollbar horizontal */
+.forecast-wrapper::-webkit-scrollbar {
+    height: 6px;
+}
+.forecast-wrapper::-webkit-scrollbar-thumb {
+    background-color: #ffcb6b;
+    border-radius: 10px;
+}
+
+/* Card individual */
 .forecast-card {
     min-width: 120px;
     background: #1c1c21;
     padding: 12px;
-    border-radius: 10px;
+    border-radius: 12px;
     text-align: center;
     color: #fff;
-    border: 1px solid #333;
+    border: 1px solid #3a3a40;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
 }
 
-.f-date {
+/* Data */
+.forecast-card h3 {
+    font-size: 1rem;
     font-weight: bold;
     margin-bottom: 5px;
+    color: #ffcb6b;
+}
+
+/* Texto geral */
+.forecast-card p {
+    font-size: 0.9rem;
+    margin: 3px 0;
 }
 
 /* ===== Media Queries ===== */
@@ -154,4 +188,5 @@ input#search:focus {
     .weather-box h2 { font-size: 1.3rem; }
     .weather-box p { font-size: 0.9rem; }
     .weather-box img { width: 50px; }
+    .forecast-card { min-width: 110px; }
 }
