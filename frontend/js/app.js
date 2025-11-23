@@ -1,138 +1,90 @@
-let map = L.map('map').setView([-15.7801, -47.9292], 4); // Brasil inicial
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-    attribution: '&copy; OpenStreetMap contributors'
-}).addTo(map);
+import { Queue, Stack, LinkedList, HashTable } from './structure.js';
+import { addToHistory } from './history.js';
 
-let marker;
+const API_BASE="https://clima-seguro-backend.onrender.com";
+const fila=new Queue();
+const pilha=new Stack();
+const lista=new LinkedList();
+const cache=new HashTable();
+let map,marker;
 
-async function loadWeather(lat, lon, name, country) {
-    try {
-        const res = await fetch(`${API_BASE}/api/weather?lat=${lat}&lon=${lon}&name=${encodeURIComponent(name)}&country=${encodeURIComponent(country)}`);
-        const data = await res.json();
+export async function loadWeather(lat,lon,name,country){
+    const key=`${lat},${lon}`;
+    let cached=cache.get(key);
+    if(cached){ renderWeather(cached); centerMap(lat,lon); addToHistory(name,null,country); return;}
 
-        if (data.error) {
-            alert(data.error);
-            return;
-        }
-
-        document.getElementById("weather").classList.remove("hidden");
-        document.getElementById("city-name").innerText = `${data.city} (${data.country})`;
-        document.getElementById("flag").src = data.flag || "";
-        document.getElementById("flag").style.display = data.flag ? "block" : "none";
-        document.getElementById("desc").innerText = data.description || "";
-        document.getElementById("temp").innerText = `🌡 Temperatura: ${Math.round(data.temp)}°C`;
-        document.getElementById("humidity").innerText = `💧 Umidade: ${data.humidity}%`;
-        document.getElementById("wind").innerText = `🌬 Vento: ${data.wind} km/h`;
-
-        // Atualiza mapa
-        if(marker) map.removeLayer(marker);
-        marker = L.marker([lat, lon]).addTo(map);
-        map.setView([lat, lon], 10);
-
-        // Forecast
-        loadForecast(lat, lon);
-
-        // Histórico
-        addToHistory({
-            name: data.city,
-            state: "",
-            country: data.country
-        });
-
-    } catch(err){
-        console.error(err);
-    }
+    try{
+        const res=await fetch(`${API_BASE}/api/weather?lat=${lat}&lon=${lon}&name=${encodeURIComponent(name)}&country=${encodeURIComponent(country)}`);
+        const data=await res.json();
+        cache.set(key,data);
+        fila.enqueue(name);
+        pilha.push(name);
+        lista.add(data);
+        renderWeather(data);
+        centerMap(lat,lon);
+        addToHistory(name,null,country);
+        loadForecast(lat,lon);
+    }catch(err){console.error(err);}
 }
 
-// Forecast
-async function loadForecast(lat, lon){
-    try {
-        const res = await fetch(`${API_BASE}/api/forecast?lat=${lat}&lon=${lon}`);
-        const data = await res.json();
+function renderWeather(data){
+    document.getElementById("weather").classList.remove("hidden");
+    document.getElementById("city-name").textContent=`${data.city} (${data.country})`;
+    const flag=document.getElementById("flag");
+    flag.src=data.flag||"";
+    flag.style.display=data.flag?"block":"none";
+    document.getElementById("desc").textContent=data.description||"";
+    document.getElementById("temp").textContent=`🌡 Temperatura: ${Math.round(data.temp)}°C`;
+    document.getElementById("humidity").textContent=`💧 Umidade: ${data.humidity}%`;
+    document.getElementById("wind").textContent=`🌬 Vento: ${data.wind} km/h`;
+}
+
+async function loadForecast(lat,lon){
+    try{
+        const res=await fetch(`${API_BASE}/api/forecast?lat=${lat}&lon=${lon}`);
+        const data=await res.json();
         renderForecast(data);
-    } catch(err){
-        console.error(err);
-    }
+    }catch(err){console.error(err);}
 }
 
 function renderForecast(data){
-    const container = document.getElementById("forecast-container");
-    container.innerHTML = "";
-    if(!data || !data.time) return;
-
-    data.time.forEach((t, i)=>{
-        const div = document.createElement("div");
-        div.className = "forecast-card";
-        div.innerHTML = `
-            <span>${t}</span>
-            <span>Max: ${Math.round(data.tmax[i])}°C</span>
-            <span>Min: ${Math.round(data.tmin[i])}°C</span>
-            <span>${mapWeatherCode(data.wcode[i])}</span>
+    const container=document.getElementById("forecast-container");
+    container.innerHTML="";
+    if(!data||!data.time) return;
+    for(let i=0;i<data.time.length;i++){
+        const card=document.createElement("div");
+        card.className="forecast-card";
+        card.innerHTML=`
+            <p class="f-date">${data.time[i]}</p>
+            <p>Máx: ${Math.round(data.tmax[i])}°C</p>
+            <p>Mín: ${Math.round(data.tmin[i])}°C</p>
+            <p>${mapWeatherCode(data.wcode[i])}</p>
         `;
-        container.appendChild(div);
-    });
+        container.appendChild(card);
+    }
 }
 
 function mapWeatherCode(code){
-    const map = {
-        0: "☀ Limpo",1:"🌤 Poucas nuvens",2:"⛅ Parcialmente nublado",3:"☁ Nublado",
-        45:"🌫 Nevoeiro",48:"🌫 Nevoeiro",
-        51:"🌦 Chuvisco leve",
-        61:"🌧 Chuva fraca",63:"🌧 Chuva moderada",65:"🌧🌧 Chuva forte",
-        80:"🌦 Pancadas leves",81:"🌧 Pancadas moderadas",82:"🌧🌧 Pancadas fortes"
-    };
-    return map[code] || "Indefinido";
+    const map={0:"☀ Limpo",1:"🌤 Poucas nuvens",2:"⛅ Parcialmente nublado",3:"☁ Nublado",
+               45:"🌫 Nevoeiro",48:"🌫 Nevoeiro",
+               51:"🌦 Chuvisco leve",61:"🌧 Chuva fraca",63:"🌧 Chuva moderada",65:"🌧🌧 Chuva forte",
+               80:"🌦 Pancadas leves",81:"🌧 Pancadas moderadas",82:"🌧🌧 Pancadas fortes"};
+    return map[code]||"Indefinido";
 }
 
-// ================= HISTÓRICO =================
-class Node {
-    constructor(data) { this.data = data; this.next = null; }
-}
-class LinkedList {
-    constructor() { this.head = null; }
-    add(data) { const node = new Node(data); node.next = this.head; this.head = node; }
-    toList() { const result = []; let current = this.head; while(current){ result.push(current.data); current = current.next;} return result;}
-}
-class Queue { constructor(){ this.items = [];} enqueue(item){this.items.push(item);} dequeue(){return this.items.length>0?this.items.shift():null;} getAll(){return this.items;}}
-class Stack { constructor(){this.items = [];} push(item){this.items.push(item);} pop(){return this.items.length>0?this.items.pop():null;} getAll(){return this.items;}}
-
-const historyQueue = new Queue();
-const historyStack = new Stack();
-const historyList = new LinkedList();
-const historyContainer = document.getElementById("history-container");
-
-function addToHistory(cityObj){
-    historyQueue.enqueue(cityObj);
-    historyStack.push(cityObj);
-    historyList.add(cityObj);
-    renderHistory();
+// MAPA
+export function initMap(){
+    map=L.map('map').setView([0,0],2);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+        attribution:'&copy; OpenStreetMap contributors'
+    }).addTo(map);
 }
 
-function renderHistory(){
-    historyContainer.innerHTML = "";
-    historyQueue.getAll().forEach((city,index)=>{
-        const div = document.createElement("div");
-        div.className = "history-card";
-        div.innerHTML = `<span>${city.name}, ${city.state || ""}, ${city.country}</span>
-        <button onclick="removeHistory(${index})">X</button>`;
-        historyContainer.appendChild(div);
-    });
+function centerMap(lat,lon){
+    if(!map) return;
+    if(marker) map.removeLayer(marker);
+    map.setView([lat,lon],10);
+    marker=L.marker([lat,lon]).addTo(map);
 }
 
-function removeHistory(index){
-    historyQueue.items.splice(index,1);
-    historyStack.items.splice(index,1);
-    let current = historyList.head, prev=null;
-    for(let i=0;i<=index && current;i++){
-        if(i===index){ if(prev) prev.next=current.next; else historyList.head=current.next; break;}
-        prev=current; current=current.next;
-    }
-    renderHistory();
-}
-
-// Para integração com autocomplete
-function selectCity(city){
-    searchInput.value=city.name;
-    clearAutocomplete();
-    loadWeather(city.lat, city.lon, city.name, city.country_code);
-}
+document.addEventListener("DOMContentLoaded",initMap);
