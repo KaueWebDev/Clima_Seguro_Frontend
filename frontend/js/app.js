@@ -1,23 +1,15 @@
-const API_BASE = "https://clima-seguro-backend.onrender.com";
+const API_BASE = "https://clima-seguro-backend.onrender.com"; // Backend no Render
 
-// Inicializa mapa
-let map = L.map("map").setView([-15.78, -47.93], 4);
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 18,
-}).addTo(map);
+const searchInput = document.getElementById("search");
+const autocompleteBox = document.getElementById("autocomplete-list");
+const weatherBox = document.getElementById("weather");
 
-let mapMarker = null;
-
-// ===============================
-// FUNÇÃO PARA CARREGAR O CLIMA
-// ===============================
-
+// =========================
+// FUNÇÃO PRINCIPAL: CARREGA O CLIMA
+// =========================
 async function loadWeather(lat, lon, name, country) {
     try {
-        const res = await fetch(
-            `${API_BASE}/api/weather?lat=${lat}&lon=${lon}&name=${encodeURIComponent(name)}&country=${encodeURIComponent(country)}`
-        );
-
+        const res = await fetch(`${API_BASE}/api/weather?lat=${lat}&lon=${lon}&name=${encodeURIComponent(name)}&country=${encodeURIComponent(country)}`);
         const data = await res.json();
 
         if (data.error) {
@@ -26,67 +18,152 @@ async function loadWeather(lat, lon, name, country) {
             return;
         }
 
-        // MOSTRA A BOX
-        weather.classList.remove("hidden");
-
-        // APLICA DADOS
+        weatherBox.classList.remove("hidden");
         document.getElementById("city-name").innerText = `${data.city} (${data.country})`;
+        const flagEl = document.getElementById("flag");
+        if (data.flag) {
+            flagEl.src = data.flag;
+            flagEl.style.display = "inline-block";
+        } else {
+            flagEl.style.display = "none";
+        }
         document.getElementById("desc").innerText = data.description || "";
         document.getElementById("temp").innerText = `🌡 Temperatura: ${Math.round(data.temp)}°C`;
         document.getElementById("humidity").innerText = `💧 Umidade: ${data.humidity}%`;
         document.getElementById("wind").innerText = `🌬 Vento: ${data.wind} km/h`;
 
-        // BANDEIRA
-        const flag = document.getElementById("flag");
-        if (data.flag) {
-            flag.src = data.flag;
-            flag.style.display = "block";
-        } else {
-            flag.style.display = "none";
-        }
+        // Carregar previsão dos próximos dias
+        loadForecast(lat, lon);
 
-        // ===============================
-        // ATUALIZA O MAPA
-        // ===============================
-        if (mapMarker) {
-            map.removeLayer(mapMarker);
-        }
-
-        mapMarker = L.marker([lat, lon]).addTo(map);
-        map.setView([lat, lon], 10);
-
-        // ===============================
-        // PREVISÃO DOS PRÓXIMOS DIAS
-        // ===============================
-        updateForecast(data.forecast || []);
+        // Atualizar mapa
+        updateMap(lat, lon, data.city);
 
     } catch (err) {
         console.error("Erro ao carregar o clima:", err);
+        weatherBox.classList.remove("hidden");
+        weatherBox.innerHTML = "<p>Erro ao carregar o clima</p>";
     }
 }
 
-// ===============================
-// FUNÇÃO PREVISÃO
-// ===============================
-function updateForecast(forecast) {
+// =========================
+// FUNÇÃO: BUSCAR PREVISÃO OPEN-METEO
+// =========================
+async function loadForecast(lat, lon) {
+    try {
+        const res = await fetch(`${API_BASE}/api/forecast?lat=${lat}&lon=${lon}`);
+        const data = await res.json();
+
+        if (data.error) {
+            console.error("Erro no forecast:", data.error);
+            return;
+        }
+
+        renderForecast(data);
+    } catch (err) {
+        console.error("Erro ao obter previsão:", err);
+    }
+}
+
+// =========================
+// FUNÇÃO: RENDERIZA PREVISÃO
+// =========================
+function renderForecast(data) {
     const container = document.getElementById("forecast-container");
+    if (!container) return;
+
     container.innerHTML = "";
 
-    if (!forecast || forecast.length === 0) {
-        container.innerHTML = "<p>Nenhuma previsão encontrada.</p>";
-        return;
-    }
-
-    forecast.forEach(day => {
+    for (let i = 0; i < data.time.length; i++) {
         const card = document.createElement("div");
-        card.className = "forecast-card";
+        card.classList.add("forecast-card");
 
         card.innerHTML = `
-            <h3>${day.date}</h3>
-            <p>${day.description}</p>
-            <p>🌡 ${day.temp_min}° / ${day.temp_max}°</p>
+            <h3 class="f-date">${data.time[i]}</h3>
+            <p>Máx: ${Math.round(data.tmax[i])}°C</p>
+            <p>Mín: ${Math.round(data.tmin[i])}°C</p>
+            <p>${mapWeatherCode(data.wcode[i])}</p>
         `;
 
         container.appendChild(card);
-    });
+    }
+}
+
+// =========================
+// FUNÇÃO: MAPEAR WEATHER CODES
+// =========================
+function mapWeatherCode(code) {
+    const map = {
+        0: "☀ Limpo",
+        1: "🌤 Poucas nuvens",
+        2: "⛅ Parcialmente nublado",
+        3: "☁ Nublado",
+        45: "🌫 Nevoeiro",
+        48: "🌫 Nevoeiro",
+        51: "🌦 Chuvisco leve",
+        61: "🌧 Chuva fraca",
+        63: "🌧 Chuva moderada",
+        65: "🌧🌧 Chuva forte",
+        80: "🌦 Pancadas leves",
+        81: "🌧 Pancadas moderadas",
+        82: "🌧🌧 Pancadas fortes"
+    };
+    return map[code] || "Indefinido";
+}
+
+// =========================
+// AUTOCOMPLETE
+// =========================
+searchInput.addEventListener("input", async () => {
+    const query = searchInput.value.trim();
+    if (query.length < 2) {
+        autocompleteBox.innerHTML = "";
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_BASE}/api/autocomplete?q=${encodeURIComponent(query)}`);
+        const data = await res.json();
+
+        autocompleteBox.innerHTML = "";
+        data.forEach(city => {
+            const div = document.createElement("div");
+            div.className = "option";
+            div.textContent = `${city.name} (${city.country_code})`;
+
+            div.addEventListener("click", () => {
+                searchInput.value = city.name;
+                autocompleteBox.innerHTML = "";
+                loadWeather(city.lat, city.lon, city.name, city.country_code);
+            });
+
+            autocompleteBox.appendChild(div);
+        });
+    } catch (err) {
+        console.error("Erro no autocomplete:", err);
+        autocompleteBox.innerHTML = "<div class='option'>Erro ao buscar cidades</div>";
+    }
+});
+
+// =========================
+// MAPA LEAFLET
+// =========================
+let map = L.map('map').setView([-9.66599, -35.735], 5); // Posição inicial
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+}).addTo(map);
+
+let marker = null;
+
+function updateMap(lat, lon, cityName) {
+    const latNum = parseFloat(lat);
+    const lonNum = parseFloat(lon);
+
+    if (marker) {
+        map.removeLayer(marker);
+    }
+    marker = L.marker([latNum, lonNum]).addTo(map)
+        .bindPopup(cityName)
+        .openPopup();
+
+    map.setView([latNum, lonNum], 10);
 }
