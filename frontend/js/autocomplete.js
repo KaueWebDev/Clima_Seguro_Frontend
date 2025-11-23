@@ -1,4 +1,3 @@
-const API_BASE = "https://clima-seguro-backend.onrender.com";
 const searchInput = document.getElementById("search");
 const autocompleteBox = document.getElementById("autocomplete-list");
 
@@ -15,14 +14,10 @@ searchInput.addEventListener("input", async () => {
 
         autocompleteBox.innerHTML = "";
 
-        const seen = new Set();
         data.forEach(city => {
-            if (seen.has(city.name)) return;
-            seen.add(city.name);
-
             const div = document.createElement("div");
             div.className = "option";
-            div.textContent = `${city.name}`;
+            div.textContent = city.name;
 
             div.addEventListener("click", () => {
                 searchInput.value = city.name;
