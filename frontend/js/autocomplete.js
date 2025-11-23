@@ -17,7 +17,9 @@ searchInput.addEventListener("input", async () => {
         data.forEach(city => {
             const div = document.createElement("div");
             div.className = "option";
-            div.textContent = city.name;
+
+            // Nome simplificado (já ajustado no backend)
+            div.textContent = `${city.name} (${city.country_code})`;
 
             div.addEventListener("click", () => {
                 searchInput.value = city.name;
