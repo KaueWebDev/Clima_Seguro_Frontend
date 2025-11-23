@@ -17,7 +17,7 @@ searchInput.addEventListener("input", async ()=>{
                 searchInput.value=city.name;
                 autocompleteBox.innerHTML="";
                 loadWeather(city.lat, city.lon, city.name, city.country_code);
-                addToHistory(city.name, city.country_code); 
+                addToHistory(city.name, " " ,city.country_code); 
             });
             autocompleteBox.appendChild(div);
         });
