@@ -1,121 +1,115 @@
 const API_BASE = "https://clima-seguro-backend.onrender.com";
-let map = L.map('map').setView([-15, -55], 4);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom:19
+const weatherBox = document.getElementById("weather");
+const forecastContainer = document.getElementById("forecast-container");
+
+// Guardar a função original para o autocomplete.js chamar
+window.loadWeatherOriginal = loadWeather;
+
+// Inicializa mapa
+const map = L.map("map").setView([-14.2350, -51.9253], 4); // Brasil
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
-let marker;
+let marker = null;
 
+// Função para carregar clima
 async function loadWeather(lat, lon, name, country) {
     try {
         const res = await fetch(`${API_BASE}/api/weather?lat=${lat}&lon=${lon}&name=${encodeURIComponent(name)}&country=${encodeURIComponent(country)}`);
         const data = await res.json();
 
-        if(data.error){ alert(data.error); return; }
+        if (data.error) {
+            weatherBox.classList.remove("hidden");
+            weatherBox.innerHTML = `<p>Erro: ${data.error}</p>`;
+            return;
+        }
 
-        document.getElementById("weather").classList.remove("hidden");
-        document.getElementById("city-name").innerText = `${data.city} (${data.country})`;
-        document.getElementById("flag").src = data.flag || "";
-        document.getElementById("flag").style.display = data.flag ? "block" : "none";
+        weatherBox.classList.remove("hidden");
+        document.getElementById("city-name").innerText = `${data.city} (${data.country || '??'})`;
+        const flagEl = document.getElementById("flag");
+        if (data.flag) {
+            flagEl.src = data.flag;
+            flagEl.style.display = "block";
+        } else {
+            flagEl.style.display = "none";
+        }
         document.getElementById("desc").innerText = data.description || "";
         document.getElementById("temp").innerText = `🌡 Temperatura: ${Math.round(data.temp)}°C`;
         document.getElementById("humidity").innerText = `💧 Umidade: ${data.humidity}%`;
         document.getElementById("wind").innerText = `🌬 Vento: ${data.wind} km/h`;
 
-        // Atualizar mapa
-        if(marker) map.removeLayer(marker);
-        marker = L.marker([lat, lon]).addTo(map);
+        // Atualiza mapa
+        if (marker) {
+            map.removeLayer(marker);
+        }
+        marker = L.marker([lat, lon]).addTo(map).bindPopup(`${name}, ${country}`).openPopup();
         map.setView([lat, lon], 10);
 
+        // Carregar previsão dos próximos dias
         loadForecast(lat, lon);
-    } catch(err){ console.error(err); }
+
+    } catch (err) {
+        console.error("Erro ao carregar o clima:", err);
+        weatherBox.classList.remove("hidden");
+        weatherBox.innerHTML = "<p>Erro ao carregar o clima</p>";
+    }
 }
 
-// Forecast
-async function loadForecast(lat, lon){
+// Função para carregar previsão Open-Meteo
+async function loadForecast(lat, lon) {
     try {
         const res = await fetch(`${API_BASE}/api/forecast?lat=${lat}&lon=${lon}`);
         const data = await res.json();
-        if(data.error){ console.error(data.error); return; }
+
+        if (data.error) {
+            console.error("Erro no forecast:", data.error);
+            forecastContainer.innerHTML = `<p>Erro ao obter previsão</p>`;
+            return;
+        }
+
         renderForecast(data);
-    } catch(err){ console.error(err); }
+    } catch (err) {
+        console.error("Erro ao obter previsão:", err);
+        forecastContainer.innerHTML = `<p>Erro ao obter previsão</p>`;
+    }
 }
 
-function renderForecast(data){
-    const container = document.getElementById("forecast-container");
-    container.innerHTML="";
-    for(let i=0;i<data.time.length;i++){
+// Função para exibir previsão
+function renderForecast(data) {
+    forecastContainer.innerHTML = "";
+
+    for (let i = 0; i < data.time.length; i++) {
         const card = document.createElement("div");
         card.classList.add("forecast-card");
-        card.innerHTML=`
+
+        card.innerHTML = `
             <h3>${data.time[i]}</h3>
             <p>Máx: ${Math.round(data.tmax[i])}°C</p>
             <p>Mín: ${Math.round(data.tmin[i])}°C</p>
             <p>${mapWeatherCode(data.wcode[i])}</p>
         `;
-        container.appendChild(card);
+
+        forecastContainer.appendChild(card);
     }
 }
 
-function mapWeatherCode(code){
-    const map = {0:"☀ Limpo",1:"🌤 Poucas nuvens",2:"⛅ Parcialmente nublado",3:"☁ Nublado",
-        45:"🌫 Nevoeiro",48:"🌫 Nevoeiro",51:"🌦 Chuvisco leve",61:"🌧 Chuva fraca",63:"🌧 Chuva moderada",
-        65:"🌧🌧 Chuva forte",80:"🌦 Pancadas leves",81:"🌧 Pancadas moderadas",82:"🌧🌧 Pancadas fortes"};
-    return map[code]||"Indefinido";
-}
-async function updateDebugBoxes() {
-    try {
-        const [queueRes, stackRes, listRes] = await Promise.all([
-            fetch(`${API_BASE}/api/debug/queue`),
-            fetch(`${API_BASE}/api/debug/stack`),
-            fetch(`${API_BASE}/api/debug/list`)
-        ]);
-
-        const queueData = await queueRes.json();
-        const stackData = await stackRes.json();
-        const listData = await listRes.json();
-
-        // Queue
-        const queueList = document.getElementById("queue-list");
-        queueList.innerHTML = queueData.map(item => `<li>${item}</li>`).join("");
-
-        // Stack
-        const stackList = document.getElementById("stack-list");
-        stackList.innerHTML = stackData.map(item => `<li>${item}</li>`).join("");
-
-        // LinkedList
-        const listBox = document.getElementById("list-items");
-        listBox.innerHTML = listData.map(item => {
-            return `<li>${item.city} - 🌡 ${item.temp}°C - 💧 ${item.humidity}% - 🌬 ${item.wind} km/h</li>`;
-        }).join("");
-
-    } catch (err) {
-        console.error("Erro ao atualizar debug boxes:", err);
-    }
-}
-
-// Chame sempre que carregar uma nova cidade
-async function loadWeather(lat, lon, name, country) {
-    try {
-        const res = await fetch(`${API_BASE}/api/weather?lat=${lat}&lon=${lon}&name=${encodeURIComponent(name)}&country=${encodeURIComponent(country)}`);
-        const data = await res.json();
-        if (data.error) return;
-
-        // Atualiza dados visíveis
-        document.getElementById("city-name").innerText = `${data.city} (${data.country})`;
-        document.getElementById("flag").src = data.flag || "";
-        document.getElementById("desc").innerText = data.description || "";
-        document.getElementById("temp").innerText = `🌡 Temperatura: ${Math.round(data.temp)}°C`;
-        document.getElementById("humidity").innerText = `💧 Umidade: ${data.humidity}%`;
-        document.getElementById("wind").innerText = `🌬 Vento: ${data.wind} km/h`;
-
-        // Atualiza próximos dias
-        loadForecast(lat, lon);
-
-        // Atualiza debug boxes
-        updateDebugBoxes();
-
-    } catch (err) {
-        console.error("Erro ao carregar o clima:", err);
-    }
+// Mapeamento de weather codes
+function mapWeatherCode(code) {
+    const map = {
+        0: "☀ Limpo",
+        1: "🌤 Poucas nuvens",
+        2: "⛅ Parcialmente nublado",
+        3: "☁ Nublado",
+        45: "🌫 Nevoeiro",
+        48: "🌫 Nevoeiro",
+        51: "🌦 Chuvisco leve",
+        61: "🌧 Chuva fraca",
+        63: "🌧 Chuva moderada",
+        65: "🌧🌧 Chuva forte",
+        80: "🌦 Pancadas leves",
+        81: "🌧 Pancadas moderadas",
+        82: "🌧🌧 Pancadas fortes"
+    };
+    return map[code] || "Indefinido";
 }
