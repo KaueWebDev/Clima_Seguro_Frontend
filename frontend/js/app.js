@@ -1,4 +1,5 @@
 const API_BASE = "https://clima-seguro-backend.onrender.com";
+
 const weatherBox = document.getElementById("weather");
 const forecastContainer = document.getElementById("forecast-container");
 
@@ -10,7 +11,7 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 
 let marker = null;
 
-// ⚡ Torna a função global para o autocomplete.js chamar
+// Torna a função global
 window.loadWeather = async function(lat, lon, name, country) {
     try {
         const res = await fetch(`${API_BASE}/api/weather?lat=${lat}&lon=${lon}&name=${encodeURIComponent(name)}&country=${encodeURIComponent(country)}`);
@@ -39,13 +40,11 @@ window.loadWeather = async function(lat, lon, name, country) {
         document.getElementById("wind").innerText = `🌬 Vento: ${data.wind} km/h`;
 
         // Atualiza mapa
-        if (marker) {
-            map.removeLayer(marker);
-        }
+        if (marker) map.removeLayer(marker);
         marker = L.marker([lat, lon]).addTo(map).bindPopup(`${name}, ${country}`).openPopup();
         map.setView([lat, lon], 10);
 
-        // Carregar previsão dos próximos dias
+        // Carrega previsão
         loadForecast(lat, lon);
 
     } catch (err) {
@@ -55,26 +54,22 @@ window.loadWeather = async function(lat, lon, name, country) {
     }
 };
 
-// Função para carregar previsão Open-Meteo
 async function loadForecast(lat, lon) {
     try {
         const res = await fetch(`${API_BASE}/api/forecast?lat=${lat}&lon=${lon}`);
         const data = await res.json();
 
         if (data.error) {
-            console.error("Erro no forecast:", data.error);
             forecastContainer.innerHTML = `<p>Erro ao obter previsão</p>`;
             return;
         }
 
         renderForecast(data);
     } catch (err) {
-        console.error("Erro ao obter previsão:", err);
         forecastContainer.innerHTML = `<p>Erro ao obter previsão</p>`;
     }
 }
 
-// Função para exibir previsão
 function renderForecast(data) {
     forecastContainer.innerHTML = "";
 
@@ -88,27 +83,16 @@ function renderForecast(data) {
             <p>Mín: ${Math.round(data.tmin[i])}°C</p>
             <p>${mapWeatherCode(data.wcode[i])}</p>
         `;
-
         forecastContainer.appendChild(card);
     }
 }
 
-// Mapeamento de weather codes
 function mapWeatherCode(code) {
     const map = {
-        0: "☀ Limpo",
-        1: "🌤 Poucas nuvens",
-        2: "⛅ Parcialmente nublado",
-        3: "☁ Nublado",
-        45: "🌫 Nevoeiro",
-        48: "🌫 Nevoeiro",
-        51: "🌦 Chuvisco leve",
-        61: "🌧 Chuva fraca",
-        63: "🌧 Chuva moderada",
-        65: "🌧🌧 Chuva forte",
-        80: "🌦 Pancadas leves",
-        81: "🌧 Pancadas moderadas",
-        82: "🌧🌧 Pancadas fortes"
+        0: "☀ Limpo", 1: "🌤 Poucas nuvens", 2: "⛅ Parcialmente nublado", 3: "☁ Nublado",
+        45: "🌫 Nevoeiro", 48: "🌫 Nevoeiro", 51: "🌦 Chuvisco leve", 61: "🌧 Chuva fraca",
+        63: "🌧 Chuva moderada", 65: "🌧🌧 Chuva forte", 80: "🌦 Pancadas leves",
+        81: "🌧 Pancadas moderadas", 82: "🌧🌧 Pancadas fortes"
     };
     return map[code] || "Indefinido";
 }
