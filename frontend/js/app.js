@@ -1,6 +1,48 @@
-const API_BASE = "https://clima-seguro-backend.onrender.com"; 
+const API_BASE = "https://clima-seguro-backend.onrender.com";
 
-// Mapeamento weather codes
+// Inicializa mapa Leaflet
+let map = null;
+let marker = null;
+
+function initMap(defaultLat = -9.6658, defaultLon = -35.7353, zoom = 6, tile = "osm") {
+    if (!document.getElementById("map")) return;
+
+    if (map) {
+        map.setView([defaultLat, defaultLon], zoom);
+        return;
+    }
+
+    map = L.map("map", { zoomControl: true }).setView([defaultLat, defaultLon], zoom);
+
+    // Tile layer OpenStreetMap padrão
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+}
+
+function updateMap(lat, lon) {
+    if (!map) return;
+    const latNum = Number(lat);
+    const lonNum = Number(lon);
+    if (Number.isNaN(latNum) || Number.isNaN(lonNum)) return;
+
+    map.setView([latNum, lonNum], 11);
+
+    if (marker) {
+        marker.setLatLng([latNum, lonNum]);
+    } else {
+        marker = L.marker([latNum, lonNum]).addTo(map);
+    }
+}
+
+// Map is initialized on DOMContentLoaded with default view (always visible)
+document.addEventListener("DOMContentLoaded", () => {
+    initMap();
+});
+
+
+// Weather functions
 function mapWeatherCode(code) {
     const map = {
         0: "☀ Limpo",
@@ -26,7 +68,6 @@ function mapWeatherCode(code) {
 async function loadWeather(lat, lon, name, countryCode) {
     const weatherBox = document.getElementById("weather");
     try {
-        // busca dados atuais
         const res = await fetch(`${API_BASE}/api/weather?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&name=${encodeURIComponent(name)}&country=${encodeURIComponent(countryCode)}`);
         const data = await res.json();
 
@@ -38,20 +79,20 @@ async function loadWeather(lat, lon, name, countryCode) {
 
         weatherBox.classList.remove("hidden");
 
-        // City already formatted by backend? if name param is formatted, show it; else show backend city
         const displayCity = name && name.trim() ? name : (data.city || "Local Desconhecido");
         document.getElementById("city-name").textContent = displayCity;
 
-        // Flag: backend may provide 'flag' (via utils.flags), else use flagcdn fallback when countryCode available
+        // Bandeira: preferência flag do backend, senão fallback flagcdn se countryCode válido
         const flagEl = document.getElementById("flag");
-        if (data.flag && data.flag.startsWith("http")) {
+        if (data.flag && typeof data.flag === "string" && data.flag.startsWith("http")) {
             flagEl.src = data.flag;
+            flagEl.style.display = "";
         } else if (countryCode && countryCode.length === 2) {
-            // flagcdn uses lower-case country code paths or two-letter codes: https://flagcdn.com/w40/br.png
             flagEl.src = `https://flagcdn.com/w40/${countryCode.toLowerCase()}.png`;
+            flagEl.style.display = "";
         } else {
-            flagEl.src = ""; // remove src if unknown
-            flagEl.alt = "";
+            flagEl.src = "";
+            flagEl.style.display = "none";
         }
 
         document.getElementById("desc").textContent = data.description || "";
@@ -59,7 +100,10 @@ async function loadWeather(lat, lon, name, countryCode) {
         document.getElementById("humidity").textContent = `💧 Umidade: ${data.humidity ?? "--"}%`;
         document.getElementById("wind").textContent = `🌬 Vento: ${data.wind ?? "--"} km/h`;
 
-        // Carregar a previsão separada
+        // Atualiza mapa
+        updateMap(lat, lon);
+
+        // Carrega forecast
         loadForecast(lat, lon);
 
     } catch (err) {
@@ -85,13 +129,21 @@ async function loadForecast(lat, lon) {
     }
 }
 
+function formatDateShort(dateString) {
+    try {
+        const d = new Date(dateString);
+        return d.toLocaleDateString("pt-BR", { weekday: "short", day: "2-digit", month: "2-digit" });
+    } catch {
+        return dateString;
+    }
+}
+
 function renderForecast(data) {
     const container = document.getElementById("forecast-container");
     if (!container) return;
 
     container.innerHTML = "";
 
-    // Exibir próximos 6 dias, pulando o índice 0 (hoje) para não duplicar o current
     const startIndex = 1;
     const daysToShow = 6;
     const maxIndex = Math.min(data.time.length, startIndex + daysToShow);
@@ -113,14 +165,5 @@ function renderForecast(data) {
         `;
 
         container.appendChild(card);
-    }
-}
-
-function formatDateShort(dateString) {
-    try {
-        const d = new Date(dateString);
-        return d.toLocaleDateString("pt-BR", { weekday: "short", day: "2-digit", month: "2-digit" });
-    } catch {
-        return dateString;
     }
 }
