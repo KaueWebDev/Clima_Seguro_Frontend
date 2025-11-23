@@ -8,6 +8,7 @@ const lista=new LinkedList();
 const cache=new HashTable();
 let map,marker;
 
+// EXPORTANDO loadWeather para o autocomplete.js
 export async function loadWeather(lat,lon,name,country){
     const key=`${lat},${lon}`;
     let cached=cache.get(key);
