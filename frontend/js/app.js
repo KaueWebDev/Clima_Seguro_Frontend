@@ -96,3 +96,34 @@ function mapWeatherCode(code) {
     };
     return map[code] || "Indefinido";
 }
+// Função para atualizar todas as estruturas
+async function updateDataStructures() {
+    try {
+        const [queueRes, stackRes, listRes, cacheRes] = await Promise.all([
+            fetch(`${API_BASE}/debug/queue`),
+            fetch(`${API_BASE}/debug/stack`),
+            fetch(`${API_BASE}/debug/list`),
+            fetch(`${API_BASE}/debug/cache`)
+        ]);
+
+        const queue = await queueRes.json();
+        const stack = await stackRes.json();
+        const list = await listRes.json();
+        const cache = await cacheRes.json();
+
+        document.getElementById("queue-box").innerText = JSON.stringify(queue, null, 2);
+        document.getElementById("stack-box").innerText = JSON.stringify(stack, null, 2);
+        document.getElementById("list-box").innerText = JSON.stringify(list, null, 2);
+        document.getElementById("cache-box").innerText = JSON.stringify(cache, null, 2);
+
+    } catch (err) {
+        console.error("Erro ao carregar estruturas:", err);
+    }
+}
+
+// Atualiza sempre que uma cidade é consultada
+function loadWeatherWithData(lat, lon, name, country) {
+    loadWeather(lat, lon, name, country).then(() => {
+        updateDataStructures();
+    });
+}
