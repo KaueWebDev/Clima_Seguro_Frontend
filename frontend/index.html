@@ -1,40 +1,42 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clima Seguro 🌤️</title>
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClimaSeguro 🌤️</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
 <div class="container">
     <h1 class="logo-title">
         <img src="img/logo.png" alt="Logo" class="site-logo">
-        Clima Seguro
+        ClimaSeguro
     </h1>
 
     <div class="search-container">
         <input type="text" id="search" placeholder="Digite uma cidade...">
+        <button id="search-btn">🔍</button>
         <div id="autocomplete-list" class="autocomplete"></div>
-        <button id="searchBtn">Pesquisar</button>
     </div>
 
-    <div class="main-row" style="display:flex;gap:16px;align-items:flex-start;">
-        <div style="flex:1; min-width:240px;">
-            <div id="weather" class="weather-box hidden"></div>
+    <div class="main-row">
+        <div class="weather-wrapper">
+            <div id="weather" class="weather-box hidden">
+                <h2 id="city-name">Local Desconhecido</h2>
+                <img id="flag" src="" alt="Bandeira" width="60" style="display:none;">
+                <p id="desc">Condição atual</p>
+                <p id="temp">🌡 Temperatura: --°C</p>
+                <p id="humidity">💧 Umidade: --%</p>
+                <p id="wind">🌬 Vento: -- km/h</p>
+            </div>
+
             <h2 class="forecast-title">Próximos dias</h2>
             <div id="forecast-container" class="forecast-wrapper"></div>
-            <h2>Histórico (Fila)</h2>
-            <ul id="queue-history"></ul>
-            <h2>Histórico (Pilha)</h2>
-            <ul id="stack-history"></ul>
-            <h2>Histórico (Lista Ligada)</h2>
-            <ul id="list-history"></ul>
         </div>
 
-        <div style="width: 320px; flex:0 0 320px;">
-            <div id="map" style="height:100%; min-height:360px; border-radius:10px; overflow:hidden;"></div>
+        <div class="map-wrapper">
+            <div id="map"></div>
         </div>
     </div>
 </div>
