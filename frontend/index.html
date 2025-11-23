@@ -1,71 +1,48 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ClimaSeguro 🌤️</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClimaSeguro 🌤️</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
-    <div class="container">
+<div class="container">
+    <h1 class="logo-title">
+        <img src="img/logo.png" alt="Logo" class="site-logo">
+        ClimaSeguro
+    </h1>
 
-        <!-- LOGO + TÍTULO -->
-        <h1 class="logo-title">
-            <img src="img/logo.png" alt="Logo" class="site-logo">
-            ClimaSeguro
-        </h1>
-
-        <!-- CAMPO DE BUSCA -->
-        <div class="search-container">
-            <input type="text" id="search" placeholder="Digite uma cidade...">
-            <button id="search-btn">Pesquisar</button>
-            <div id="autocomplete-list" class="autocomplete"></div>
-        </div>
-
-        <!-- CONTEÚDO PRINCIPAL -->
-        <div class="main-row">
-            <!-- Weather e forecast -->
-            <div class="weather-wrapper">
-                <div id="weather" class="weather-box hidden">
-                    <h2 id="city-name">Local Desconhecido</h2>
-                    <img id="flag" src="" alt="Bandeira" width="60" style="display:none;">
-                    <p id="desc">Condição atual</p>
-                    <p id="temp">🌡 Temperatura: --°C</p>
-                    <p id="humidity">💧 Umidade: --%</p>
-                    <p id="wind">🌬 Vento: -- km/h</p>
-                </div>
-
-                <h2 class="forecast-title">Próximos dias</h2>
-                <div id="forecast-container" class="forecast-wrapper"></div>
-            </div>
-
-            <!-- MAPA -->
-            <div id="map-container">
-                <div id="map"></div>
-            </div>
-        </div>
-
-        <!-- DEBUG BOXES -->
-        <div class="debug-boxes">
-            <div id="queue-box" class="debug-box">
-                <h3>Últimas pesquisas (Queue)</h3>
-                <ul id="queue-list"></ul>
-            </div>
-            <div id="stack-box" class="debug-box">
-                <h3>Últimas pesquisas (Stack)</h3>
-                <ul id="stack-list"></ul>
-            </div>
-            <div id="list-box" class="debug-box">
-                <h3>Detalhes das pesquisas (LinkedList)</h3>
-                <ul id="list-items"></ul>
-            </div>
-        </div>
-
+    <div class="search-container">
+        <input type="text" id="search" placeholder="Digite uma cidade...">
+        <button id="search-btn">Buscar</button>
+        <div id="autocomplete-list" class="autocomplete"></div>
     </div>
 
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/autocomplete.js"></script>
+    <div class="main-row" style="display:flex;gap:16px;align-items:flex-start;">
+        <div style="flex:1;min-width:240px;">
+            <div id="weather" class="weather-box hidden">
+                <h2 id="city-name">Local Desconhecido</h2>
+                <img id="flag" src="" alt="Bandeira" width="60" style="display:none;">
+                <p id="desc">Condição atual</p>
+                <p id="temp">🌡 Temperatura: --°C</p>
+                <p id="humidity">💧 Umidade: --%</p>
+                <p id="wind">🌬 Vento: -- km/h</p>
+            </div>
+
+            <h2 class="forecast-title">Próximos dias</h2>
+            <div id="forecast-container" class="forecast-wrapper"></div>
+        </div>
+
+        <div style="width: 320px; flex:0 0 320px;">
+            <div id="map" style="height:360px; border-radius:10px; overflow:hidden;"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="js/app.js"></script>
+<script src="js/autocomplete.js"></script>
 </body>
 </html>
