@@ -1,4 +1,5 @@
 const API_BASE = "https://clima-seguro-backend.onrender.com";
+
 const searchInput = document.getElementById("search");
 const autocompleteBox = document.getElementById("autocomplete-list");
 
@@ -11,30 +12,25 @@ searchInput.addEventListener("input", async () => {
 
     try {
         const res = await fetch(`${API_BASE}/api/autocomplete?q=${encodeURIComponent(query)}`);
-        const data = await res.json();
+        const cities = await res.json();
 
         autocompleteBox.innerHTML = "";
 
-        const seen = new Set();
-        data.forEach(city => {
-            if (seen.has(city.name)) return;
-            seen.add(city.name);
+        cities.forEach(city => {
+            const item = document.createElement("div");
+            item.className = "option";
+            item.textContent = city.name;
 
-            const div = document.createElement("div");
-            div.className = "option";
-            div.textContent = `${city.name}`;
-
-            div.addEventListener("click", () => {
+            item.addEventListener("click", () => {
                 searchInput.value = city.name;
                 autocompleteBox.innerHTML = "";
                 loadWeather(city.lat, city.lon, city.name, city.country_code);
             });
 
-            autocompleteBox.appendChild(div);
+            autocompleteBox.appendChild(item);
         });
 
-    } catch (err) {
-        console.error("Erro no autocomplete:", err);
-        autocompleteBox.innerHTML = "<div class='option'>Erro ao buscar cidades</div>";
+    } catch (error) {
+        console.error("Erro no autocomplete:", error);
     }
 });
