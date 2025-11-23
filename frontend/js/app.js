@@ -1,43 +1,5 @@
 const API_BASE = "https://clima-seguro-backend.onrender.com";
 
-const searchInput = document.getElementById("search");
-const autocompleteBox = document.getElementById("autocomplete-list");
-
-// Autocomplete
-searchInput.addEventListener("input", async () => {
-    const query = searchInput.value.trim();
-    if (query.length < 2) {
-        autocompleteBox.innerHTML = "";
-        return;
-    }
-
-    try {
-        const res = await fetch(`${API_BASE}/api/autocomplete?q=${encodeURIComponent(query)}`);
-        const data = await res.json();
-
-        autocompleteBox.innerHTML = "";
-
-        data.forEach(city => {
-            const div = document.createElement("div");
-            div.className = "option";
-            div.textContent = city.name;
-
-            div.addEventListener("click", () => {
-                searchInput.value = city.name;
-                autocompleteBox.innerHTML = "";
-
-                loadWeather(city.lat, city.lon, city.name, city.country_code);
-            });
-
-            autocompleteBox.appendChild(div);
-        });
-
-    } catch (err) {
-        console.error("Erro no autocomplete:", err);
-    }
-});
-
-// Weather
 async function loadWeather(lat, lon, name, country) {
     const weatherBox = document.getElementById("weather");
 
@@ -65,5 +27,6 @@ async function loadWeather(lat, lon, name, country) {
 
     } catch (err) {
         console.error("Erro ao carregar o clima:", err);
+        weatherBox.innerHTML = `<p>Erro ao carregar clima</p>`;
     }
 }
