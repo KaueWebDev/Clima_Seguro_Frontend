@@ -3,7 +3,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Trebuchet MS', sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 body {
@@ -18,23 +18,17 @@ body {
 
 .container {
     width: 90%;
-    max-width: 720px;
+    max-width: 800px;
     text-align: center;
 }
 
-/* ===== Título + Logo ===== */
-h1 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-    color: #ffcb6b;
-    text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
-}
-
+/* ===== Logo e título ===== */
 .logo-title {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 12px;
+    margin-bottom: 20px;
 }
 
 .site-logo {
@@ -43,13 +37,13 @@ h1 {
     object-fit: contain;
 }
 
-/* ===== Campo de busca ===== */
+/* ===== Search ===== */
 .search-container {
     position: relative;
     margin-bottom: 20px;
     display: flex;
-    gap: 10px;
     justify-content: center;
+    gap: 8px;
 }
 
 input#search {
@@ -61,53 +55,51 @@ input#search {
     outline: none;
     background-color: #1f1f27;
     color: #fff;
-    transition: 0.3s;
 }
 
-input#search:focus {
-    box-shadow: 0 0 10px #ffcb6b;
-}
-
-#search-btn {
+button#search-btn {
     padding: 12px 15px;
-    border-radius: 10px;
     border: none;
+    border-radius: 10px;
     background-color: #ffcb6b;
-    color: #1b1b1b;
-    font-weight: bold;
     cursor: pointer;
-    transition: 0.3s;
+    font-size: 16px;
 }
 
-#search-btn:hover {
-    background-color: #e0b35d;
-}
-
-/* ===== Autocomplete ===== */
+/* Autocomplete */
 .autocomplete {
     position: absolute;
-    top: 50px; /* sobreposto ao mapa */
+    top: 48px;
     left: 0;
     right: 0;
     background-color: #1f1f27;
     border-radius: 0 0 10px 10px;
-    max-height: 200px;
+    max-height: 100px;
     overflow-y: auto;
-    z-index: 1000; /* sempre acima do mapa */
-    box-shadow: 0 5px 10px rgba(0,0,0,0.5);
+    z-index: 100;
 }
 
 .option {
     padding: 10px;
     cursor: pointer;
-    transition: 0.2s;
 }
 
 .option:hover {
     background-color: #33334d;
 }
 
-/* ===== Weather Box ===== */
+/* ===== Layout principal ===== */
+.main-row {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.weather-wrapper {
+    flex: 1;
+    min-width: 250px;
+}
+
 .weather-box {
     margin-top: 15px;
     background: rgba(255, 255, 255, 0.05);
@@ -133,23 +125,20 @@ input#search:focus {
     margin: 5px 0;
 }
 
-.hidden {
-    display: none;
+.hidden { display: none; }
+
+.map-wrapper {
+    flex: 0 0 320px;
+    min-height: 360px;
 }
 
-/* ===== Scrollbar Autocomplete ===== */
-.autocomplete::-webkit-scrollbar {
-    width: 6px;
+#map {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
 }
 
-.autocomplete::-webkit-scrollbar-thumb {
-    background-color: #ffcb6b;
-    border-radius: 3px;
-}
-
-/* ===============================
-   PREVISÃO DOS PRÓXIMOS DIAS
-================================= */
+/* Forecast */
 .forecast-title {
     margin-top: 25px;
     margin-bottom: 10px;
@@ -158,46 +147,7 @@ input#search:focus {
     text-align: left;
     font-weight: 600;
 }
-.data-title {
-    margin-top: 30px;
-    margin-bottom: 10px;
-    font-size: 1.5rem;
-    color: #ffcb6b;
-    text-align: left;
-}
 
-.data-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    justify-content: space-between;
-}
-
-.data-box {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 15px;
-    border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
-    flex: 1 1 180px;
-    min-width: 180px;
-}
-
-.data-box h3 {
-    font-size: 1.1rem;
-    margin-bottom: 5px;
-    color: #ffcb6b;
-}
-
-.data-box pre {
-    font-size: 0.9rem;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    color: #fff;
-    max-height: 150px;
-    overflow-y: auto;
-}
-
-/* Wrapper com scroll */
 .forecast-wrapper {
     display: flex;
     gap: 15px;
@@ -207,7 +157,6 @@ input#search:focus {
     scroll-behavior: smooth;
 }
 
-/* Scrollbar horizontal */
 .forecast-wrapper::-webkit-scrollbar {
     height: 6px;
 }
@@ -216,7 +165,6 @@ input#search:focus {
     border-radius: 10px;
 }
 
-/* Card individual */
 .forecast-card {
     min-width: 120px;
     background: #1c1c21;
@@ -238,24 +186,4 @@ input#search:focus {
 .forecast-card p {
     font-size: 0.9rem;
     margin: 3px 0;
-}
-
-/* ===== Media Queries ===== */
-@media (max-width: 768px) {
-    h1 { font-size: 2rem; }
-    input#search { font-size: 15px; padding: 10px; }
-    .weather-box h2 { font-size: 1.5rem; }
-    .weather-box p { font-size: 0.95rem; }
-}
-
-@media (max-width: 480px) {
-    body { padding-top: 30px; }
-    h1 { font-size: 1.8rem; }
-    input#search { font-size: 14px; padding: 8px; }
-    #search-btn { padding: 10px; font-size: 14px; }
-    .weather-box { padding: 15px; }
-    .weather-box h2 { font-size: 1.3rem; }
-    .weather-box p { font-size: 0.9rem; }
-    .weather-box img { width: 50px; }
-    .forecast-card { min-width: 110px; }
 }
