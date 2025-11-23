@@ -23,7 +23,7 @@ searchInput.addEventListener("input", async () => {
             div.addEventListener("click", () => {
                 searchInput.value = city.name;
                 autocompleteBox.innerHTML = "";
-                window.loadWeather(city.lat, city.lon, city.name, city.country_code);
+                window.loadWeatherWithData(city.lat, city.lon, city.name, city.country_code);
             });
 
             autocompleteBox.appendChild(div);
