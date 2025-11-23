@@ -63,3 +63,59 @@ function mapWeatherCode(code){
         65:"🌧🌧 Chuva forte",80:"🌦 Pancadas leves",81:"🌧 Pancadas moderadas",82:"🌧🌧 Pancadas fortes"};
     return map[code]||"Indefinido";
 }
+async function updateDebugBoxes() {
+    try {
+        const [queueRes, stackRes, listRes] = await Promise.all([
+            fetch(`${API_BASE}/api/debug/queue`),
+            fetch(`${API_BASE}/api/debug/stack`),
+            fetch(`${API_BASE}/api/debug/list`)
+        ]);
+
+        const queueData = await queueRes.json();
+        const stackData = await stackRes.json();
+        const listData = await listRes.json();
+
+        // Queue
+        const queueList = document.getElementById("queue-list");
+        queueList.innerHTML = queueData.map(item => `<li>${item}</li>`).join("");
+
+        // Stack
+        const stackList = document.getElementById("stack-list");
+        stackList.innerHTML = stackData.map(item => `<li>${item}</li>`).join("");
+
+        // LinkedList
+        const listBox = document.getElementById("list-items");
+        listBox.innerHTML = listData.map(item => {
+            return `<li>${item.city} - 🌡 ${item.temp}°C - 💧 ${item.humidity}% - 🌬 ${item.wind} km/h</li>`;
+        }).join("");
+
+    } catch (err) {
+        console.error("Erro ao atualizar debug boxes:", err);
+    }
+}
+
+// Chame sempre que carregar uma nova cidade
+async function loadWeather(lat, lon, name, country) {
+    try {
+        const res = await fetch(`${API_BASE}/api/weather?lat=${lat}&lon=${lon}&name=${encodeURIComponent(name)}&country=${encodeURIComponent(country)}`);
+        const data = await res.json();
+        if (data.error) return;
+
+        // Atualiza dados visíveis
+        document.getElementById("city-name").innerText = `${data.city} (${data.country})`;
+        document.getElementById("flag").src = data.flag || "";
+        document.getElementById("desc").innerText = data.description || "";
+        document.getElementById("temp").innerText = `🌡 Temperatura: ${Math.round(data.temp)}°C`;
+        document.getElementById("humidity").innerText = `💧 Umidade: ${data.humidity}%`;
+        document.getElementById("wind").innerText = `🌬 Vento: ${data.wind} km/h`;
+
+        // Atualiza próximos dias
+        loadForecast(lat, lon);
+
+        // Atualiza debug boxes
+        updateDebugBoxes();
+
+    } catch (err) {
+        console.error("Erro ao carregar o clima:", err);
+    }
+}
