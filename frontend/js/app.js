@@ -12,14 +12,13 @@ async function loadWeather(lat, lon, name, country) {
         }
 
         weatherBox.classList.remove("hidden");
-        document.getElementById("city-name").innerText = `${data.city} (${data.country})`;
+        document.getElementById("city-name").innerText = `${data.city}`;
         document.getElementById("flag").src = data.flag || "";
         document.getElementById("desc").innerText = data.description || "";
         document.getElementById("temp").innerText = `🌡 Temperatura: ${Math.round(data.temp)}°C`;
         document.getElementById("humidity").innerText = `💧 Umidade: ${data.humidity}%`;
         document.getElementById("wind").innerText = `🌬 Vento: ${data.wind} km/h`;
 
-        // 🔥 NOVO: Carregar previsão dos próximos dias
         loadForecast(lat, lon);
 
     } catch (err) {
@@ -30,7 +29,6 @@ async function loadWeather(lat, lon, name, country) {
 }
 
 
-// 🔥 NOVA FUNÇÃO: BUSCAR PREVISÃO OPEN-METEO
 async function loadForecast(lat, lon) {
     try {
         const res = await fetch(`${API_BASE}/api/forecast?lat=${lat}&lon=${lon}`);
@@ -47,8 +45,6 @@ async function loadForecast(lat, lon) {
     }
 }
 
-
-// 🔥 NOVA FUNÇÃO: MOSTRAR PREVISÃO NA TELA
 function renderForecast(data) {
     const container = document.getElementById("forecast-container");
     if (!container) return;
@@ -56,6 +52,7 @@ function renderForecast(data) {
     container.innerHTML = "";
 
     for (let i = 0; i < data.time.length; i++) {
+
         const card = document.createElement("div");
         card.classList.add("forecast-card");
 
@@ -70,8 +67,6 @@ function renderForecast(data) {
     }
 }
 
-
-// 🔥 MAPEAMENTO DE WEATHER CODES
 function mapWeatherCode(code) {
     const map = {
         0: "☀ Limpo",
