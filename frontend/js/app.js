@@ -2,9 +2,6 @@ const API_BASE = "https://clima-seguro-backend.onrender.com";
 const weatherBox = document.getElementById("weather");
 const forecastContainer = document.getElementById("forecast-container");
 
-// Guardar a função original para o autocomplete.js chamar
-window.loadWeatherOriginal = loadWeather;
-
 // Inicializa mapa
 const map = L.map("map").setView([-14.2350, -51.9253], 4); // Brasil
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -13,8 +10,8 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 
 let marker = null;
 
-// Função para carregar clima
-async function loadWeather(lat, lon, name, country) {
+// ⚡ Torna a função global para o autocomplete.js chamar
+window.loadWeather = async function(lat, lon, name, country) {
     try {
         const res = await fetch(`${API_BASE}/api/weather?lat=${lat}&lon=${lon}&name=${encodeURIComponent(name)}&country=${encodeURIComponent(country)}`);
         const data = await res.json();
@@ -27,6 +24,7 @@ async function loadWeather(lat, lon, name, country) {
 
         weatherBox.classList.remove("hidden");
         document.getElementById("city-name").innerText = `${data.city} (${data.country || '??'})`;
+
         const flagEl = document.getElementById("flag");
         if (data.flag) {
             flagEl.src = data.flag;
@@ -34,6 +32,7 @@ async function loadWeather(lat, lon, name, country) {
         } else {
             flagEl.style.display = "none";
         }
+
         document.getElementById("desc").innerText = data.description || "";
         document.getElementById("temp").innerText = `🌡 Temperatura: ${Math.round(data.temp)}°C`;
         document.getElementById("humidity").innerText = `💧 Umidade: ${data.humidity}%`;
@@ -54,7 +53,7 @@ async function loadWeather(lat, lon, name, country) {
         weatherBox.classList.remove("hidden");
         weatherBox.innerHTML = "<p>Erro ao carregar o clima</p>";
     }
-}
+};
 
 // Função para carregar previsão Open-Meteo
 async function loadForecast(lat, lon) {
