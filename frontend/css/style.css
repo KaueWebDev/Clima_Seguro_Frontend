@@ -30,6 +30,19 @@ h1 {
     text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
 }
 
+/* ===== Logo ===== */
+.logo-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.site-logo {
+    width: 45px; /* ajuste o tamanho como quiser */
+    height: 45px;
+    object-fit: contain;
+}
 /* ===== Campo de busca ===== */
 .search-container {
     position: relative;
