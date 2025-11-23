@@ -1,4 +1,4 @@
-const API_BASE = "https://clima-seguro-backend.onrender.com"; // Backend no Render
+const API_BASE = "https://clima-seguro-backend.onrender.com"; 
 
 const searchInput = document.getElementById("search");
 const autocompleteBox = document.getElementById("autocomplete-list");
