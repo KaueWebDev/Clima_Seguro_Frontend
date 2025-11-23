@@ -1,4 +1,5 @@
 const searchInput = document.getElementById("search");
+const searchBtn = document.getElementById("search-btn");
 const autocompleteBox = document.getElementById("autocomplete-list");
 
 searchInput.addEventListener("input", async () => {
@@ -13,32 +14,26 @@ searchInput.addEventListener("input", async () => {
         const data = await res.json();
 
         autocompleteBox.innerHTML = "";
-
-        data.forEach(city => {
-            // APENAS CIDADE + ESTADO + PAÍS
-            const formatted = city.name.split(",")[0];
-
+        data.slice(0, 2).forEach(city => { // LIMITA 2
             const div = document.createElement("div");
             div.className = "option";
-            div.textContent = `${formatted} (${city.country_code})`;
+            div.textContent = `${city.name} (${city.country_code})`;
 
             div.addEventListener("click", () => {
-                searchInput.value = formatted;
+                searchInput.value = city.name;
                 autocompleteBox.innerHTML = "";
-
-                loadWeather(
-                    city.lat,
-                    city.lon,
-                    formatted,
-                    city.country_code
-                );
+                loadWeather(city.lat, city.lon, city.name, city.country_code);
             });
 
             autocompleteBox.appendChild(div);
         });
-
     } catch (err) {
-        console.error("Erro no autocomplete:", err);
+        console.error(err);
         autocompleteBox.innerHTML = "<div class='option'>Erro ao buscar cidades</div>";
     }
+});
+
+// BOTÃO DE PESQUISA: seleciona primeira opção
+searchBtn.addEventListener("click", () => {
+    autocompleteBox.firstChild?.click();
 });
