@@ -1,74 +1,20 @@
-const API_BASE = "https://clima-seguro-backend.onrender.com";
+const API_BASE = "https://clima-seguro-backend.onrender.com"; 
+const weatherBox = document.getElementById("weather");
+let map;
 
-// Inicializa mapa Leaflet
-let map = null;
-let marker = null;
-
-function initMap(defaultLat = -9.6658, defaultLon = -35.7353, zoom = 6, tile = "osm") {
-    if (!document.getElementById("map")) return;
-
-    if (map) {
-        map.setView([defaultLat, defaultLon], zoom);
-        return;
-    }
-
-    map = L.map("map", { zoomControl: true }).setView([defaultLat, defaultLon], zoom);
-
-    // Tile layer OpenStreetMap padrão
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
+// Inicializa o mapa
+function initMap() {
+    map = L.map('map').setView([-9.66599, -35.735], 10); // Maceió padrão
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 }
 
-function updateMap(lat, lon) {
-    if (!map) return;
-    const latNum = Number(lat);
-    const lonNum = Number(lon);
-    if (Number.isNaN(latNum) || Number.isNaN(lonNum)) return;
+initMap();
 
-    map.setView([latNum, lonNum], 11);
-
-    if (marker) {
-        marker.setLatLng([latNum, lonNum]);
-    } else {
-        marker = L.marker([latNum, lonNum]).addTo(map);
-    }
-}
-
-// Map is initialized on DOMContentLoaded with default view (always visible)
-document.addEventListener("DOMContentLoaded", () => {
-    initMap();
-});
-
-
-// Weather functions
-function mapWeatherCode(code) {
-    const map = {
-        0: "☀ Limpo",
-        1: "🌤 Poucas nuvens",
-        2: "⛅ Parcialmente nublado",
-        3: "☁ Nublado",
-        45: "🌫 Nevoeiro",
-        48: "🌫 Nevoeiro",
-        51: "🌦 Chuvisco leve",
-        53: "🌦 Chuvisco moderado",
-        55: "🌧 Chuvisco forte",
-        61: "🌧 Chuva fraca",
-        63: "🌧 Chuva moderada",
-        65: "🌧🌧 Chuva forte",
-        80: "🌦 Pancadas leves",
-        81: "🌧 Pancadas moderadas",
-        82: "🌧🌧 Pancadas fortes",
-        95: "⛈ Tempestade"
-    };
-    return map[code] || "Indefinido";
-}
-
-async function loadWeather(lat, lon, name, countryCode) {
-    const weatherBox = document.getElementById("weather");
+async function loadWeather(lat, lon, name, country) {
     try {
-        const res = await fetch(`${API_BASE}/api/weather?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&name=${encodeURIComponent(name)}&country=${encodeURIComponent(countryCode)}`);
+        const res = await fetch(`${API_BASE}/api/weather?lat=${lat}&lon=${lon}&name=${encodeURIComponent(name)}&country=${encodeURIComponent(country)}`);
         const data = await res.json();
 
         if (data.error) {
@@ -78,32 +24,21 @@ async function loadWeather(lat, lon, name, countryCode) {
         }
 
         weatherBox.classList.remove("hidden");
-
-        const displayCity = name && name.trim() ? name : (data.city || "Local Desconhecido");
-        document.getElementById("city-name").textContent = displayCity;
-
-        // Bandeira: preferência flag do backend, senão fallback flagcdn se countryCode válido
-        const flagEl = document.getElementById("flag");
-        if (data.flag && typeof data.flag === "string" && data.flag.startsWith("http")) {
+        document.getElementById("city-name").innerText = `${data.city} (${data.country})`;
+        if(data.flag){
+            const flagEl = document.getElementById("flag");
             flagEl.src = data.flag;
-            flagEl.style.display = "";
-        } else if (countryCode && countryCode.length === 2) {
-            flagEl.src = `https://flagcdn.com/w40/${countryCode.toLowerCase()}.png`;
-            flagEl.style.display = "";
-        } else {
-            flagEl.src = "";
-            flagEl.style.display = "none";
+            flagEl.style.display = "block";
         }
+        document.getElementById("desc").innerText = data.description || "";
+        document.getElementById("temp").innerText = `🌡 Temperatura: ${Math.round(data.temp)}°C`;
+        document.getElementById("humidity").innerText = `💧 Umidade: ${data.humidity}%`;
+        document.getElementById("wind").innerText = `🌬 Vento: ${data.wind} km/h`;
 
-        document.getElementById("desc").textContent = data.description || "";
-        document.getElementById("temp").textContent = `🌡 Temperatura: ${Math.round(data.temp ?? 0)}°C`;
-        document.getElementById("humidity").textContent = `💧 Umidade: ${data.humidity ?? "--"}%`;
-        document.getElementById("wind").textContent = `🌬 Vento: ${data.wind ?? "--"} km/h`;
+        // Atualiza o mapa
+        updateMap(lat, lon, data.city);
 
-        // Atualiza mapa
-        updateMap(lat, lon);
-
-        // Carrega forecast
+        // Carregar previsão
         loadForecast(lat, lon);
 
     } catch (err) {
@@ -113,9 +48,16 @@ async function loadWeather(lat, lon, name, countryCode) {
     }
 }
 
+function updateMap(lat, lon, city) {
+    map.setView([lat, lon], 12);
+    L.marker([lat, lon]).addTo(map)
+        .bindPopup(city)
+        .openPopup();
+}
+
 async function loadForecast(lat, lon) {
     try {
-        const res = await fetch(`${API_BASE}/api/forecast?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`);
+        const res = await fetch(`${API_BASE}/api/forecast?lat=${lat}&lon=${lon}`);
         const data = await res.json();
 
         if (data.error) {
@@ -129,41 +71,42 @@ async function loadForecast(lat, lon) {
     }
 }
 
-function formatDateShort(dateString) {
-    try {
-        const d = new Date(dateString);
-        return d.toLocaleDateString("pt-BR", { weekday: "short", day: "2-digit", month: "2-digit" });
-    } catch {
-        return dateString;
-    }
-}
-
 function renderForecast(data) {
     const container = document.getElementById("forecast-container");
     if (!container) return;
 
     container.innerHTML = "";
 
-    const startIndex = 1;
-    const daysToShow = 6;
-    const maxIndex = Math.min(data.time.length, startIndex + daysToShow);
-
-    for (let i = startIndex; i < maxIndex; i++) {
-        const dateStr = data.time[i];
-        const tmax = data.tmax[i];
-        const tmin = data.tmin[i];
-        const wcode = data.wcode[i];
-
+    for (let i = 0; i < data.time.length; i++) {
         const card = document.createElement("div");
-        card.className = "forecast-card";
+        card.classList.add("forecast-card");
 
         card.innerHTML = `
-            <h3>${formatDateShort(dateStr)}</h3>
-            <p>Máx: <strong>${Math.round(tmax)}°C</strong></p>
-            <p>Mín: ${Math.round(tmin)}°C</p>
-            <p>${mapWeatherCode(wcode)}</p>
+            <h3>${data.time[i]}</h3>
+            <p>Máx: ${Math.round(data.tmax[i])}°C</p>
+            <p>Mín: ${Math.round(data.tmin[i])}°C</p>
+            <p>${mapWeatherCode(data.wcode[i])}</p>
         `;
 
         container.appendChild(card);
     }
+}
+
+function mapWeatherCode(code) {
+    const map = {
+        0: "☀ Limpo",
+        1: "🌤 Poucas nuvens",
+        2: "⛅ Parcialmente nublado",
+        3: "☁ Nublado",
+        45: "🌫 Nevoeiro",
+        48: "🌫 Nevoeiro",
+        51: "🌦 Chuvisco leve",
+        61: "🌧 Chuva fraca",
+        63: "🌧 Chuva moderada",
+        65: "🌧🌧 Chuva forte",
+        80: "🌦 Pancadas leves",
+        81: "🌧 Pancadas moderadas",
+        82: "🌧🌧 Pancadas fortes"
+    };
+    return map[code] || "Indefinido";
 }
