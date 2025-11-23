@@ -13,21 +13,15 @@ searchInput.addEventListener("input", async () => {
         const data = await res.json();
 
         autocompleteBox.innerHTML = "";
-
-        const seen = new Set();
-        (data || []).forEach(item => {
-            if (!item || !item.name) return;
-            if (seen.has(item.name)) return;
-            seen.add(item.name);
-
+        data.forEach(city => {
             const div = document.createElement("div");
             div.className = "option";
-            div.textContent = item.name; // já formatado no backend
+            div.textContent = `${city.name} (${city.country_code})`;
 
             div.addEventListener("click", () => {
-                searchInput.value = item.name;
+                searchInput.value = city.name;
                 autocompleteBox.innerHTML = "";
-                loadWeather(item.lat, item.lon, item.name, item.country_code || "");
+                loadWeather(city.lat, city.lon, city.name, city.country_code);
             });
 
             autocompleteBox.appendChild(div);
