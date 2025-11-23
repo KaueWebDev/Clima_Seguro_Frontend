@@ -17,19 +17,24 @@ body {
 }
 
 .container {
-    width: 95%;
-    max-width: 1200px;
+    width: 90%;
+    max-width: 720px;
+    text-align: center;
 }
 
-/* ===== LOGO + TÍTULO ===== */
+/* ===== Título + Logo ===== */
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #ffcb6b;
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+}
+
 .logo-title {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 12px;
-    font-size: 2.5rem;
-    color: #ffcb6b;
-    text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
 }
 
 .site-logo {
@@ -38,17 +43,18 @@ body {
     object-fit: contain;
 }
 
-/* ===== CAMPO DE BUSCA ===== */
+/* ===== Campo de busca ===== */
 .search-container {
     position: relative;
-    margin: 20px 0;
+    margin-bottom: 20px;
     display: flex;
     gap: 10px;
+    justify-content: center;
 }
 
 input#search {
     flex: 1;
-    padding: 12px;
+    padding: 12px 15px;
     font-size: 16px;
     border-radius: 10px;
     border: none;
@@ -62,32 +68,33 @@ input#search:focus {
     box-shadow: 0 0 10px #ffcb6b;
 }
 
-button#search-btn {
-    padding: 12px 18px;
+#search-btn {
+    padding: 12px 15px;
     border-radius: 10px;
     border: none;
     background-color: #ffcb6b;
-    color: #000;
+    color: #1b1b1b;
     font-weight: bold;
     cursor: pointer;
-    transition: 0.2s;
+    transition: 0.3s;
 }
 
-button#search-btn:hover {
-    background-color: #e6b347;
+#search-btn:hover {
+    background-color: #e0b35d;
 }
 
 /* ===== Autocomplete ===== */
 .autocomplete {
     position: absolute;
-    top: 100%;
+    top: 50px; /* sobreposto ao mapa */
     left: 0;
     right: 0;
     background-color: #1f1f27;
     border-radius: 0 0 10px 10px;
-    max-height: 120px; /* Apenas 2 opções visíveis */
+    max-height: 200px;
     overflow-y: auto;
-    z-index: 20;
+    z-index: 1000; /* sempre acima do mapa */
+    box-shadow: 0 5px 10px rgba(0,0,0,0.5);
 }
 
 .option {
@@ -100,19 +107,7 @@ button#search-btn:hover {
     background-color: #33334d;
 }
 
-/* ===== CONTEÚDO PRINCIPAL ===== */
-.main-row {
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-}
-
-/* Weather + forecast */
-.weather-wrapper {
-    flex: 1;
-    min-width: 300px;
-}
-
+/* ===== Weather Box ===== */
 .weather-box {
     margin-top: 15px;
     background: rgba(255, 255, 255, 0.05);
@@ -142,16 +137,29 @@ button#search-btn:hover {
     display: none;
 }
 
-/* Forecast */
+/* ===== Scrollbar Autocomplete ===== */
+.autocomplete::-webkit-scrollbar {
+    width: 6px;
+}
+
+.autocomplete::-webkit-scrollbar-thumb {
+    background-color: #ffcb6b;
+    border-radius: 3px;
+}
+
+/* ===============================
+   PREVISÃO DOS PRÓXIMOS DIAS
+================================= */
 .forecast-title {
     margin-top: 25px;
     margin-bottom: 10px;
     font-size: 1.4rem;
     color: #ffcb6b;
-    font-weight: 600;
     text-align: left;
+    font-weight: 600;
 }
 
+/* Wrapper com scroll */
 .forecast-wrapper {
     display: flex;
     gap: 15px;
@@ -161,6 +169,16 @@ button#search-btn:hover {
     scroll-behavior: smooth;
 }
 
+/* Scrollbar horizontal */
+.forecast-wrapper::-webkit-scrollbar {
+    height: 6px;
+}
+.forecast-wrapper::-webkit-scrollbar-thumb {
+    background-color: #ffcb6b;
+    border-radius: 10px;
+}
+
+/* Card individual */
 .forecast-card {
     min-width: 120px;
     background: #1c1c21;
@@ -184,49 +202,22 @@ button#search-btn:hover {
     margin: 3px 0;
 }
 
-/* Mapa */
-#map-container {
-    width: 320px;
-    flex: 0 0 320px;
-}
-
-#map {
-    width: 100%;
-    height: 360px;
-    border-radius: 10px;
-}
-
-/* Debug boxes */
-.debug-boxes {
-    display: flex;
-    gap: 15px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-}
-
-.debug-box {
-    background: rgba(255,255,255,0.05);
-    padding: 12px;
-    border-radius: 10px;
-    flex: 1;
-    min-width: 200px;
-    color: #fff;
-}
-
-.debug-box h3 {
-    color: #ffcb6b;
-    font-size: 1.1rem;
-    margin-bottom: 8px;
-}
-
-.debug-box ul {
-    list-style: none;
-    padding-left: 0;
-    font-size: 0.9rem;
-}
-
-/* Media Queries */
+/* ===== Media Queries ===== */
 @media (max-width: 768px) {
-    .main-row { flex-direction: column; }
-    #map-container { width: 100%; height: 300px; }
+    h1 { font-size: 2rem; }
+    input#search { font-size: 15px; padding: 10px; }
+    .weather-box h2 { font-size: 1.5rem; }
+    .weather-box p { font-size: 0.95rem; }
+}
+
+@media (max-width: 480px) {
+    body { padding-top: 30px; }
+    h1 { font-size: 1.8rem; }
+    input#search { font-size: 14px; padding: 8px; }
+    #search-btn { padding: 10px; font-size: 14px; }
+    .weather-box { padding: 15px; }
+    .weather-box h2 { font-size: 1.3rem; }
+    .weather-box p { font-size: 0.9rem; }
+    .weather-box img { width: 50px; }
+    .forecast-card { min-width: 110px; }
 }
