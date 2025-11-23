@@ -8,45 +8,42 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
-<div class="container">
-   <h1 class="logo-title">
-       <img src="img/logo.png" alt="Logo" class="site-logo">
-       ClimaSeguro
-   </h1>
+    <div class="container">
+        <h1 class="logo-title">
+            <img src="img/logo.png" alt="Logo" class="site-logo">
+            ClimaSeguro
+        </h1>
 
-   <div class="search-container">
-       <input type="text" id="search" placeholder="Digite uma cidade...">
-       <button id="search-btn">Pesquisar</button>
-       <div id="autocomplete-list" class="autocomplete"></div>
-   </div>
+        <div class="search-container">
+            <input type="text" id="search" placeholder="Digite uma cidade...">
+            <button id="search-btn">Pesquisar</button>
+            <div id="autocomplete-list" class="autocomplete"></div>
+        </div>
 
-   <div class="main-row" style="display:flex;gap:16px;align-items:flex-start;">
-       <div style="flex:1;min-width:240px;">
-           <div id="weather" class="weather-box hidden">
-               <h2 id="city-name">Local Desconhecido</h2>
-               <img id="flag" src="" alt="Bandeira" width="60" style="display:none;">
-               <p id="desc">Condição atual</p>
-               <p id="temp">🌡 Temperatura: --°C</p>
-               <p id="humidity">💧 Umidade: --%</p>
-               <p id="wind">🌬 Vento: -- km/h</p>
-           </div>
+        <div class="main-row">
+            <div class="left-column">
+                <div id="weather" class="weather-box hidden">
+                    <h2 id="city-name">Local Desconhecido</h2>
+                    <img id="flag" src="" alt="Bandeira" style="display:none;">
+                    <p id="desc">Condição atual</p>
+                    <p id="temp">🌡 Temperatura: --°C</p>
+                    <p id="humidity">💧 Umidade: --%</p>
+                    <p id="wind">🌬 Vento: -- km/h</p>
+                </div>
 
-           <h2 class="forecast-title">Próximos dias</h2>
-           <div id="forecast-container" class="forecast-wrapper"></div>
+                <h2 class="forecast-title">Próximos dias</h2>
+                <div id="forecast-container" class="forecast-wrapper"></div>
+            </div>
 
-           <h2 class="history-title">Histórico de Pesquisas</h2>
-           <div id="history-container" class="history-wrapper"></div>
-       </div>
+            <div class="right-column">
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
 
-       <div style="width: 320px; flex:0 0 320px;">
-           <div id="map" style="height:100%; min-height:360px; border-radius:10px; overflow:hidden;"></div>
-       </div>
-   </div>
-</div>
-
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="js/app.js"></script>
-<script src="js/autocomplete.js"></script>
-<script src="js/history.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/autocomplete.js"></script>
+    <script src="js/history.js"></script>
 </body>
 </html>
