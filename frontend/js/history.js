@@ -1,10 +1,13 @@
+// Importa as estruturas de dados utilizadas para armazenar o histórico
 import { Queue, Stack, LinkedList } from './structure.js';
 
-const historyQueue = new Queue();
-const historyStack = new Stack();
-const historyList = new LinkedList();
+// Estruturas independentes para registrar o histórico em diferentes formas
+const historyQueue = new Queue(); // Armazena entradas em ordem FIFO
+const historyStack = new Stack(); // Armazena entradas em ordem LIFO
+const historyList = new LinkedList(); // Armazena toda a lista de forma encadeada
 export const historyContainer = document.getElementById("history-container");
 
+// Função responsável por adicionar uma nova entrada ao histórico
 export function addToHistory(city,state,country){
     const entry={city,state,country};
     historyQueue.enqueue(entry);
@@ -13,6 +16,7 @@ export function addToHistory(city,state,country){
     renderHistory();
 }
 
+// Função responsável por renderizar o histórico no HTML
 export function renderHistory(){
     historyContainer.innerHTML="";
     const arr=historyList.toArray();
