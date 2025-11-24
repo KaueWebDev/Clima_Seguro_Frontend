@@ -118,8 +118,8 @@ Estrutura de pastas organizada
 - Backend organizado em /utils
 - Estruturas de dados separadas
 
-
-
+![princ3](https://github.com/user-attachments/assets/3b153d8f-0b8c-4f64-9941-b72f91b6c587)
+![princ4](https://github.com/user-attachments/assets/6f0e525c-591c-485f-baea-a319fb098a4f)
 
 🔗 Links Importantes
 🌐 Site publicado:
