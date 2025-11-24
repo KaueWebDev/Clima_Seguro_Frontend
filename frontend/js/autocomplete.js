@@ -1,17 +1,22 @@
+// Importa a função loadWeather do arquivo principal app.js
 import { loadWeather } from './app.js';
 
 const API_BASE="https://clima-seguro-backend.onrender.com";
+
+// Pega os elementos do DOM
 const searchInput=document.getElementById("search");
 const autocompleteBox=document.getElementById("autocomplete-list");
 const searchBtn=document.getElementById("search-btn");
 
+// Função responsável por buscar cidades na API
 async function fetchCities(query){
     const res=await fetch(`${API_BASE}/api/autocomplete?q=${encodeURIComponent(query)}`);
     return await res.json();
 }
 
+// Evento que dispara a cada vez que o usuário digita
 searchInput.addEventListener("input",async ()=>{
-    const query=searchInput.value.trim();
+    const query=searchInput.value.trim(); // Remove espaços extras
     if(query.length<2){autocompleteBox.innerHTML=""; return;}
     try{
         const data=await fetchCities(query);
@@ -30,7 +35,7 @@ searchInput.addEventListener("input",async ()=>{
     }catch(err){console.error(err); autocompleteBox.innerHTML="<div class='option'>Erro ao buscar cidades</div>";}
 });
 
-// Botão pesquisar
+// Botão de pesquisa manual (caso o usuário clique no botão)
 searchBtn.addEventListener("click",async ()=>{
     const query=searchInput.value.trim();
     if(!query) return;
